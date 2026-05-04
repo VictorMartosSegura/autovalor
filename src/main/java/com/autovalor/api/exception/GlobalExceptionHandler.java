@@ -49,6 +49,19 @@ public class GlobalExceptionHandler {
         return buildResponse(status, message, request.getRequestURI(), null);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(
+            IllegalArgumentException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage() == null ? "Peticion no valida" : exception.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiErrorResponse> handleBadCredentials(
             BadCredentialsException exception,
