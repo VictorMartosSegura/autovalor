@@ -132,7 +132,10 @@ class AuthIntegrationTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Ya existe una cuenta con este email"));
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message").value("Ya existe una cuenta con este email"))
+                .andExpect(jsonPath("$.path").value("/api/auth/register"));
     }
 
     private void registerDefaultUser() throws Exception {
@@ -166,8 +169,6 @@ class AuthIntegrationTest {
     }
 
     private void createAdminByRestartingInitializerLogic() {
-        // The test clears the database before each test, so the application startup admin is also removed.
-        // Create an admin through the repository using the same user model, then log in through the public endpoint.
         com.autovalor.user.User admin = new com.autovalor.user.User(
                 "AutoValor Admin",
                 "admin@autovalor.test",
