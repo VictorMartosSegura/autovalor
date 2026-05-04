@@ -1,11 +1,14 @@
 package com.autovalor.api.controller.rest;
 
 import com.autovalor.api.dto.listingDTO.CreateListingRequest;
+import com.autovalor.api.dto.listingDTO.ListingPageResponse;
 import com.autovalor.api.dto.listingDTO.ListingResponse;
 import com.autovalor.api.dto.listingDTO.UpdateListingStatusRequest;
+import com.autovalor.api.model.ListingStatus;
 import com.autovalor.api.service.ListingService;
 import com.autovalor.user.User;
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,7 +35,44 @@ public class ListingController {
     }
 
     @GetMapping
-    public List<ListingResponse> getAllPublic() {
+    public ListingPageResponse searchPublic(
+            @RequestParam(required = false, name = "q") String query,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String model,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Integer minYear,
+            @RequestParam(required = false) Integer maxYear,
+            @RequestParam(required = false) Integer minKm,
+            @RequestParam(required = false) Integer maxKm,
+            @RequestParam(required = false) String fuelType,
+            @RequestParam(required = false) String transmission,
+            @RequestParam(required = false) ListingStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(defaultValue = "newest") String sort
+    ) {
+        return listingService.searchPublic(
+                query,
+                brand,
+                model,
+                minPrice,
+                maxPrice,
+                minYear,
+                maxYear,
+                minKm,
+                maxKm,
+                fuelType,
+                transmission,
+                status,
+                page,
+                size,
+                sort
+        );
+    }
+
+    @GetMapping("/all")
+    public List<ListingResponse> getAllPublicLegacy() {
         return listingService.findAllPublic();
     }
 
