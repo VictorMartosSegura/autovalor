@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/v3/api-docs", "/swagger-ui", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/listings/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/cars/*/contact").permitAll()
