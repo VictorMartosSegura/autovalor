@@ -11,6 +11,9 @@ build/
 !.env.example
 application-local.properties
 
+### Uploaded files ###
+uploads/
+
 ### STS ###
 .apt_generated
 .classpath
