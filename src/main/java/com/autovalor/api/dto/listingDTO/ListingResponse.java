@@ -15,6 +15,21 @@ public class ListingResponse {
     private Integer km;
     private String fuelType;
     private String transmission;
+    private String location;
+    private String province;
+    private String sellerType;
+    private String bodyType;
+    private Integer doors;
+    private Integer powerCv;
+    private String engineSize;
+    private String environmentalLabel;
+    private Boolean warranty;
+    private String color;
+    private Integer registrationMonth;
+    private Integer registrationYear;
+    private Integer previousOwners;
+    private Boolean financeable;
+    private Boolean maintenanceBook;
     private ListingStatus status;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
@@ -50,6 +65,51 @@ public class ListingResponse {
 
     public String getTransmission() { return transmission; }
     public void setTransmission(String transmission) { this.transmission = transmission; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
+
+    public String getSellerType() { return sellerType; }
+    public void setSellerType(String sellerType) { this.sellerType = sellerType; }
+
+    public String getBodyType() { return bodyType; }
+    public void setBodyType(String bodyType) { this.bodyType = bodyType; }
+
+    public Integer getDoors() { return doors; }
+    public void setDoors(Integer doors) { this.doors = doors; }
+
+    public Integer getPowerCv() { return powerCv; }
+    public void setPowerCv(Integer powerCv) { this.powerCv = powerCv; }
+
+    public String getEngineSize() { return engineSize; }
+    public void setEngineSize(String engineSize) { this.engineSize = engineSize; }
+
+    public String getEnvironmentalLabel() { return environmentalLabel; }
+    public void setEnvironmentalLabel(String environmentalLabel) { this.environmentalLabel = environmentalLabel; }
+
+    public Boolean getWarranty() { return warranty; }
+    public void setWarranty(Boolean warranty) { this.warranty = warranty; }
+
+    public String getColor() { return color; }
+    public void setColor(String color) { this.color = color; }
+
+    public Integer getRegistrationMonth() { return registrationMonth; }
+    public void setRegistrationMonth(Integer registrationMonth) { this.registrationMonth = registrationMonth; }
+
+    public Integer getRegistrationYear() { return registrationYear; }
+    public void setRegistrationYear(Integer registrationYear) { this.registrationYear = registrationYear; }
+
+    public Integer getPreviousOwners() { return previousOwners; }
+    public void setPreviousOwners(Integer previousOwners) { this.previousOwners = previousOwners; }
+
+    public Boolean getFinanceable() { return financeable; }
+    public void setFinanceable(Boolean financeable) { this.financeable = financeable; }
+
+    public Boolean getMaintenanceBook() { return maintenanceBook; }
+    public void setMaintenanceBook(Boolean maintenanceBook) { this.maintenanceBook = maintenanceBook; }
 
     public ListingStatus getStatus() { return status; }
     public void setStatus(ListingStatus status) { this.status = status; }
