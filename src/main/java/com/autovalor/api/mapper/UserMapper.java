@@ -1,19 +1,20 @@
 package com.autovalor.api.mapper;
 
 import com.autovalor.api.dto.userDTO.UserResponse;
-import com.autovalor.api.model.User;
+import com.autovalor.user.User;
 
 public final class UserMapper {
 
-    private UserMapper() {}
+    private UserMapper() {
+    }
 
-    public static UserResponse toResponse(User u) {
-        if (u == null) return null;
+    public static UserResponse toResponse(User user) {
+        if (user == null) return null;
 
         UserResponse dto = new UserResponse();
-        dto.setId(u.getId());
-        dto.setEmail(u.getEmail());
-        dto.setName(u.getName());
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setName(user.getName());
         return dto;
     }
 }
