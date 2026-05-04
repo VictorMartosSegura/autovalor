@@ -34,6 +34,21 @@ public final class ListingMapper {
         dto.setKm(listing.getKm());
         dto.setFuelType(listing.getFuelType());
         dto.setTransmission(listing.getTransmission());
+        dto.setLocation(listing.getLocation());
+        dto.setProvince(listing.getProvince());
+        dto.setSellerType(listing.getSellerType());
+        dto.setBodyType(listing.getBodyType());
+        dto.setDoors(listing.getDoors());
+        dto.setPowerCv(listing.getPowerCv());
+        dto.setEngineSize(listing.getEngineSize());
+        dto.setEnvironmentalLabel(listing.getEnvironmentalLabel());
+        dto.setWarranty(listing.getWarranty());
+        dto.setColor(listing.getColor());
+        dto.setRegistrationMonth(listing.getRegistrationMonth());
+        dto.setRegistrationYear(listing.getRegistrationYear());
+        dto.setPreviousOwners(listing.getPreviousOwners());
+        dto.setFinanceable(listing.getFinanceable());
+        dto.setMaintenanceBook(listing.getMaintenanceBook());
         dto.setStatus(listing.getStatus());
         dto.setCreatedAt(listing.getCreatedAt());
         dto.setUpdatedAt(listing.getUpdatedAt());
@@ -60,6 +75,21 @@ public final class ListingMapper {
         target.setKm(req.getKm());
         target.setFuelType(req.getFuelType());
         target.setTransmission(req.getTransmission());
+        target.setLocation(req.getLocation());
+        target.setProvince(req.getProvince());
+        target.setSellerType(req.getSellerType());
+        target.setBodyType(req.getBodyType());
+        target.setDoors(req.getDoors());
+        target.setPowerCv(req.getPowerCv());
+        target.setEngineSize(req.getEngineSize());
+        target.setEnvironmentalLabel(req.getEnvironmentalLabel());
+        target.setWarranty(req.getWarranty());
+        target.setColor(req.getColor());
+        target.setRegistrationMonth(req.getRegistrationMonth());
+        target.setRegistrationYear(req.getRegistrationYear());
+        target.setPreviousOwners(req.getPreviousOwners());
+        target.setFinanceable(req.getFinanceable());
+        target.setMaintenanceBook(req.getMaintenanceBook());
         target.markUpdated();
     }
 }
