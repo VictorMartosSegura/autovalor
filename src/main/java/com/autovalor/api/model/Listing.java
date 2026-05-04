@@ -42,10 +42,13 @@ public class Listing {
     @Column(length = 80)
     private String model;
 
+    @Column(name = "manufacture_year")
     private Integer year;
+
+    @Column(name = "kilometers")
     private Integer km;
 
-    @Column(length = 40)
+    @Column(name = "fuel_type", length = 40)
     private String fuelType;
 
     @Column(length = 40)
