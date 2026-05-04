@@ -34,6 +34,23 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+tasks.named('bootRun') {
+	def envFile = file('.env')
+	if (envFile.exists()) {
+		envFile.readLines().each { line ->
+			def trimmedLine = line.trim()
+			if (trimmedLine && !trimmedLine.startsWith('#')) {
+				def separatorIndex = trimmedLine.indexOf('=')
+				if (separatorIndex > 0) {
+					def key = trimmedLine.substring(0, separatorIndex).trim()
+					def value = trimmedLine.substring(separatorIndex + 1).trim()
+					environment key, value
+				}
+			}
+		}
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
