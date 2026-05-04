@@ -24,7 +24,9 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
                     where (:query is null or lower(l.title) like lower(concat('%', :query, '%'))
                         or lower(l.description) like lower(concat('%', :query, '%'))
                         or lower(l.brand) like lower(concat('%', :query, '%'))
-                        or lower(l.model) like lower(concat('%', :query, '%')))
+                        or lower(l.model) like lower(concat('%', :query, '%'))
+                        or lower(l.location) like lower(concat('%', :query, '%'))
+                        or lower(l.province) like lower(concat('%', :query, '%')))
                     and (:brand is null or lower(l.brand) = lower(:brand))
                     and (:model is null or lower(l.model) = lower(:model))
                     and (:minPrice is null or l.price >= :minPrice)
@@ -35,6 +37,16 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
                     and (:maxKm is null or l.km <= :maxKm)
                     and (:fuelType is null or lower(l.fuelType) = lower(:fuelType))
                     and (:transmission is null or lower(l.transmission) = lower(:transmission))
+                    and (:location is null or lower(l.location) = lower(:location))
+                    and (:province is null or lower(l.province) = lower(:province))
+                    and (:sellerType is null or lower(l.sellerType) = lower(:sellerType))
+                    and (:bodyType is null or lower(l.bodyType) = lower(:bodyType))
+                    and (:doors is null or l.doors = :doors)
+                    and (:minPowerCv is null or l.powerCv >= :minPowerCv)
+                    and (:maxPowerCv is null or l.powerCv <= :maxPowerCv)
+                    and (:environmentalLabel is null or lower(l.environmentalLabel) = lower(:environmentalLabel))
+                    and (:warranty is null or l.warranty = :warranty)
+                    and (:financeable is null or l.financeable = :financeable)
                     and (:status is null or l.status = :status)
                     and l.status <> 'HIDDEN'
                     """,
@@ -43,7 +55,9 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
                     where (:query is null or lower(l.title) like lower(concat('%', :query, '%'))
                         or lower(l.description) like lower(concat('%', :query, '%'))
                         or lower(l.brand) like lower(concat('%', :query, '%'))
-                        or lower(l.model) like lower(concat('%', :query, '%')))
+                        or lower(l.model) like lower(concat('%', :query, '%'))
+                        or lower(l.location) like lower(concat('%', :query, '%'))
+                        or lower(l.province) like lower(concat('%', :query, '%')))
                     and (:brand is null or lower(l.brand) = lower(:brand))
                     and (:model is null or lower(l.model) = lower(:model))
                     and (:minPrice is null or l.price >= :minPrice)
@@ -54,6 +68,16 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
                     and (:maxKm is null or l.km <= :maxKm)
                     and (:fuelType is null or lower(l.fuelType) = lower(:fuelType))
                     and (:transmission is null or lower(l.transmission) = lower(:transmission))
+                    and (:location is null or lower(l.location) = lower(:location))
+                    and (:province is null or lower(l.province) = lower(:province))
+                    and (:sellerType is null or lower(l.sellerType) = lower(:sellerType))
+                    and (:bodyType is null or lower(l.bodyType) = lower(:bodyType))
+                    and (:doors is null or l.doors = :doors)
+                    and (:minPowerCv is null or l.powerCv >= :minPowerCv)
+                    and (:maxPowerCv is null or l.powerCv <= :maxPowerCv)
+                    and (:environmentalLabel is null or lower(l.environmentalLabel) = lower(:environmentalLabel))
+                    and (:warranty is null or l.warranty = :warranty)
+                    and (:financeable is null or l.financeable = :financeable)
                     and (:status is null or l.status = :status)
                     and l.status <> 'HIDDEN'
                     """
@@ -70,6 +94,16 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
             @Param("maxKm") Integer maxKm,
             @Param("fuelType") String fuelType,
             @Param("transmission") String transmission,
+            @Param("location") String location,
+            @Param("province") String province,
+            @Param("sellerType") String sellerType,
+            @Param("bodyType") String bodyType,
+            @Param("doors") Integer doors,
+            @Param("minPowerCv") Integer minPowerCv,
+            @Param("maxPowerCv") Integer maxPowerCv,
+            @Param("environmentalLabel") String environmentalLabel,
+            @Param("warranty") Boolean warranty,
+            @Param("financeable") Boolean financeable,
             @Param("status") ListingStatus status,
             Pageable pageable
     );
