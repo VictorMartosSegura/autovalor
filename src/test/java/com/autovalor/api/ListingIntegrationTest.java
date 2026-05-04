@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.autovalor.api.repository.FavoriteRepository;
+import com.autovalor.api.repository.ListingImageRepository;
 import com.autovalor.api.repository.ListingRepository;
 import com.autovalor.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +46,12 @@ class ListingIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private ListingImageRepository listingImageRepository;
+
+    @Autowired
     private ListingRepository listingRepository;
 
     @Autowired
@@ -51,6 +59,8 @@ class ListingIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        favoriteRepository.deleteAll();
+        listingImageRepository.deleteAll();
         listingRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -79,8 +89,9 @@ class ListingIntegrationTest {
 
         mockMvc.perform(get("/api/cars"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title").value("Volkswagen Golf 2018"));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].title").value("Volkswagen Golf 2018"))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
 
     @Test
