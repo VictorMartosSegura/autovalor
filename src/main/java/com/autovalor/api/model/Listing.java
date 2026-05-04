@@ -1,6 +1,15 @@
 package com.autovalor.api.model;
 
-import jakarta.persistence.*;
+import com.autovalor.user.User;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
@@ -8,7 +17,8 @@ import java.time.OffsetDateTime;
 @Table(name = "listings")
 public class Listing {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -36,14 +46,16 @@ public class Listing {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    // getters/setters
-
     public Long getId() {
         return id;
     }
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {
@@ -105,6 +117,4 @@ public class Listing {
     public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
-
-    public void setUser(User user) { this.user = user; }
 }
