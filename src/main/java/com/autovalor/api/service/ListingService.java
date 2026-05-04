@@ -1,6 +1,7 @@
 package com.autovalor.api.service;
 
 import com.autovalor.api.dto.listingDTO.CreateListingRequest;
+import com.autovalor.api.dto.listingDTO.ListingPageResponse;
 import com.autovalor.api.dto.listingDTO.ListingResponse;
 import com.autovalor.api.mapper.ListingMapper;
 import com.autovalor.api.model.Listing;
@@ -10,7 +11,12 @@ import com.autovalor.api.repository.ListingImageRepository;
 import com.autovalor.api.repository.ListingRepository;
 import com.autovalor.user.Role;
 import com.autovalor.user.User;
+import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +44,57 @@ public class ListingService {
         return listingRepository.findAllPublicWithUser().stream()
                 .map(ListingMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ListingPageResponse searchPublic(
+            String query,
+            String brand,
+            String model,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Integer minYear,
+            Integer maxYear,
+            Integer minKm,
+            Integer maxKm,
+            String fuelType,
+            String transmission,
+            ListingStatus status,
+            int page,
+            int size,
+            String sort
+    ) {
+        Pageable pageable = PageRequest.of(
+                Math.max(page, 0),
+                Math.min(Math.max(size, 1), 100),
+                resolveSort(sort)
+        );
+
+        Page<Listing> result = listingRepository.searchPublic(
+                normalize(query),
+                normalize(brand),
+                normalize(model),
+                minPrice,
+                maxPrice,
+                minYear,
+                maxYear,
+                minKm,
+                maxKm,
+                normalize(fuelType),
+                normalize(transmission),
+                status,
+                pageable
+        );
+
+        return new ListingPageResponse(
+                result.getContent().stream().map(ListingMapper::toResponse).toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages(),
+                result.isFirst(),
+                result.isLast()
+        );
     }
 
     @Transactional(readOnly = true)
@@ -101,5 +158,26 @@ public class ListingService {
         if (!isOwner && !isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes modificar este anuncio");
         }
+    }
+
+    private String normalize(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+
+    private Sort resolveSort(String sort) {
+        if (sort == null || sort.isBlank()) {
+            return Sort.by(Sort.Direction.DESC, "createdAt");
+        }
+
+        return switch (sort) {
+            case "price_asc" -> Sort.by(Sort.Direction.ASC, "price");
+            case "price_desc" -> Sort.by(Sort.Direction.DESC, "price");
+            case "year_asc" -> Sort.by(Sort.Direction.ASC, "year");
+            case "year_desc" -> Sort.by(Sort.Direction.DESC, "year");
+            case "km_asc" -> Sort.by(Sort.Direction.ASC, "km");
+            case "km_desc" -> Sort.by(Sort.Direction.DESC, "km");
+            case "oldest" -> Sort.by(Sort.Direction.ASC, "createdAt");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
     }
 }
