@@ -1,10 +1,9 @@
 package com.autovalor.api.repository;
 
-import com.autovalor.api.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
-
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+/**
+ * Deprecated placeholder kept to avoid breaking old imports while the backend
+ * uses com.autovalor.user.UserRepository as the single active user repository.
+ */
+@Deprecated
+interface UserRepository {
 }
