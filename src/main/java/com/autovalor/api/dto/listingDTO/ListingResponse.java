@@ -1,5 +1,6 @@
 package com.autovalor.api.dto.listingDTO;
 
+import com.autovalor.api.model.ListingStatus;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
@@ -12,12 +13,14 @@ public class ListingResponse {
     private String model;
     private Integer year;
     private Integer km;
+    private String fuelType;
+    private String transmission;
+    private ListingStatus status;
     private OffsetDateTime createdAt;
-
+    private OffsetDateTime updatedAt;
     private Long userId;
     private String userName;
 
-    // getters/setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -42,8 +45,20 @@ public class ListingResponse {
     public Integer getKm() { return km; }
     public void setKm(Integer km) { this.km = km; }
 
+    public String getFuelType() { return fuelType; }
+    public void setFuelType(String fuelType) { this.fuelType = fuelType; }
+
+    public String getTransmission() { return transmission; }
+    public void setTransmission(String transmission) { this.transmission = transmission; }
+
+    public ListingStatus getStatus() { return status; }
+    public void setStatus(ListingStatus status) { this.status = status; }
+
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
