@@ -5,6 +5,8 @@ import com.autovalor.api.dto.listingDTO.ListingResponse;
 import com.autovalor.api.mapper.ListingMapper;
 import com.autovalor.api.model.Listing;
 import com.autovalor.api.model.ListingStatus;
+import com.autovalor.api.repository.FavoriteRepository;
+import com.autovalor.api.repository.ListingImageRepository;
 import com.autovalor.api.repository.ListingRepository;
 import com.autovalor.user.Role;
 import com.autovalor.user.User;
@@ -18,9 +20,17 @@ import org.springframework.web.server.ResponseStatusException;
 public class ListingService {
 
     private final ListingRepository listingRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final ListingImageRepository listingImageRepository;
 
-    public ListingService(ListingRepository listingRepository) {
+    public ListingService(
+            ListingRepository listingRepository,
+            FavoriteRepository favoriteRepository,
+            ListingImageRepository listingImageRepository
+    ) {
         this.listingRepository = listingRepository;
+        this.favoriteRepository = favoriteRepository;
+        this.listingImageRepository = listingImageRepository;
     }
 
     @Transactional(readOnly = true)
@@ -74,6 +84,8 @@ public class ListingService {
     public void delete(Long id, User user) {
         Listing listing = getExistingListing(id);
         assertOwnerOrAdmin(listing, user);
+        favoriteRepository.deleteAllByListingId(id);
+        listingImageRepository.deleteAll(listingImageRepository.findAllByListingIdOrderByCreatedAtAsc(id));
         listingRepository.delete(listing);
     }
 
