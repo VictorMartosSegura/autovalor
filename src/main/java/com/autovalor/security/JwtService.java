@@ -3,8 +3,10 @@ package com.autovalor.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -78,8 +80,8 @@ public class JwtService {
         byte[] keyBytes;
         try {
             keyBytes = Decoders.BASE64.decode(secretKey);
-        } catch (IllegalArgumentException exception) {
-            keyBytes = secretKey.getBytes();
+        } catch (IllegalArgumentException | DecodingException exception) {
+            keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         }
         return Keys.hmacShaKeyFor(keyBytes);
     }
