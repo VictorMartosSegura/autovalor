@@ -44,75 +44,122 @@ public class CreateListingRequest {
     @Size(max = 40)
     private String transmission;
 
-    public String getTitle() {
-        return title;
-    }
+    @Size(max = 120)
+    private String location;
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    @Size(max = 80)
+    private String province;
 
-    public String getDescription() {
-        return description;
-    }
+    @Size(max = 40)
+    private String sellerType;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @Size(max = 60)
+    private String bodyType;
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+    @Min(2)
+    @Max(6)
+    private Integer doors;
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+    @Min(1)
+    @Max(2000)
+    private Integer powerCv;
 
-    public String getBrand() {
-        return brand;
-    }
+    @Size(max = 40)
+    private String engineSize;
 
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
+    @Size(max = 40)
+    private String environmentalLabel;
 
-    public String getModel() {
-        return model;
-    }
+    private Boolean warranty;
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+    @Size(max = 60)
+    private String color;
 
-    public Integer getYear() {
-        return year;
-    }
+    @Min(1)
+    @Max(12)
+    private Integer registrationMonth;
 
-    public void setYear(Integer year) {
-        this.year = year;
-    }
+    @Min(1900)
+    @Max(2100)
+    private Integer registrationYear;
 
-    public Integer getKm() {
-        return km;
-    }
+    @Min(0)
+    @Max(20)
+    private Integer previousOwners;
 
-    public void setKm(Integer km) {
-        this.km = km;
-    }
+    private Boolean financeable;
 
-    public String getFuelType() {
-        return fuelType;
-    }
+    private Boolean maintenanceBook;
 
-    public void setFuelType(String fuelType) {
-        this.fuelType = fuelType;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTransmission() {
-        return transmission;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setTransmission(String transmission) {
-        this.transmission = transmission;
-    }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+
+    public String getBrand() { return brand; }
+    public void setBrand(String brand) { this.brand = brand; }
+
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
+
+    public Integer getKm() { return km; }
+    public void setKm(Integer km) { this.km = km; }
+
+    public String getFuelType() { return fuelType; }
+    public void setFuelType(String fuelType) { this.fuelType = fuelType; }
+
+    public String getTransmission() { return transmission; }
+    public void setTransmission(String transmission) { this.transmission = transmission; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
+
+    public String getSellerType() { return sellerType; }
+    public void setSellerType(String sellerType) { this.sellerType = sellerType; }
+
+    public String getBodyType() { return bodyType; }
+    public void setBodyType(String bodyType) { this.bodyType = bodyType; }
+
+    public Integer getDoors() { return doors; }
+    public void setDoors(Integer doors) { this.doors = doors; }
+
+    public Integer getPowerCv() { return powerCv; }
+    public void setPowerCv(Integer powerCv) { this.powerCv = powerCv; }
+
+    public String getEngineSize() { return engineSize; }
+    public void setEngineSize(String engineSize) { this.engineSize = engineSize; }
+
+    public String getEnvironmentalLabel() { return environmentalLabel; }
+    public void setEnvironmentalLabel(String environmentalLabel) { this.environmentalLabel = environmentalLabel; }
+
+    public Boolean getWarranty() { return warranty; }
+    public void setWarranty(Boolean warranty) { this.warranty = warranty; }
+
+    public String getColor() { return color; }
+    public void setColor(String color) { this.color = color; }
+
+    public Integer getRegistrationMonth() { return registrationMonth; }
+    public void setRegistrationMonth(Integer registrationMonth) { this.registrationMonth = registrationMonth; }
+
+    public Integer getRegistrationYear() { return registrationYear; }
+    public void setRegistrationYear(Integer registrationYear) { this.registrationYear = registrationYear; }
+
+    public Integer getPreviousOwners() { return previousOwners; }
+    public void setPreviousOwners(Integer previousOwners) { this.previousOwners = previousOwners; }
+
+    public Boolean getFinanceable() { return financeable; }
+    public void setFinanceable(Boolean financeable) { this.financeable = financeable; }
+
+    public Boolean getMaintenanceBook() { return maintenanceBook; }
+    public void setMaintenanceBook(Boolean maintenanceBook) { this.maintenanceBook = maintenanceBook; }
 }
