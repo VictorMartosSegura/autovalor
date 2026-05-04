@@ -63,6 +63,16 @@ public class ListingService {
             Integer maxKm,
             String fuelType,
             String transmission,
+            String location,
+            String province,
+            String sellerType,
+            String bodyType,
+            Integer doors,
+            Integer minPowerCv,
+            Integer maxPowerCv,
+            String environmentalLabel,
+            Boolean warranty,
+            Boolean financeable,
             ListingStatus status,
             int page,
             int size,
@@ -86,6 +96,16 @@ public class ListingService {
                 maxKm,
                 normalize(fuelType),
                 normalize(transmission),
+                normalize(location),
+                normalize(province),
+                normalize(sellerType),
+                normalize(bodyType),
+                doors,
+                minPowerCv,
+                maxPowerCv,
+                normalize(environmentalLabel),
+                warranty,
+                financeable,
                 status,
                 pageable
         );
@@ -181,6 +201,8 @@ public class ListingService {
             case "year_desc" -> Sort.by(Sort.Direction.DESC, "year");
             case "km_asc" -> Sort.by(Sort.Direction.ASC, "km");
             case "km_desc" -> Sort.by(Sort.Direction.DESC, "km");
+            case "power_asc" -> Sort.by(Sort.Direction.ASC, "powerCv");
+            case "power_desc" -> Sort.by(Sort.Direction.DESC, "powerCv");
             case "oldest" -> Sort.by(Sort.Direction.ASC, "createdAt");
             default -> Sort.by(Sort.Direction.DESC, "createdAt");
         };
