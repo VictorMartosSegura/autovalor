@@ -23,7 +23,7 @@ public class VehicleAiSuggestionController {
     @PostMapping(value = "/vehicle-suggestions", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public VehicleAiSuggestionResponse suggestVehicleData(
             @RequestParam(value = "prompt", required = false) String prompt,
-            @RequestParam("images") List<MultipartFile> images
+            @RequestParam(value = "images", required = false) List<MultipartFile> images
     ) {
         return vehicleAiSuggestionService.suggest(prompt, images);
     }
