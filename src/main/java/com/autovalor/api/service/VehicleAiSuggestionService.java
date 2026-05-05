@@ -30,12 +30,11 @@ public class VehicleAiSuggestionService {
     private final boolean enabled;
 
     public VehicleAiSuggestionService(
-            ObjectMapper objectMapper,
             @Value("${app.ai.openai.api-key:}") String apiKey,
             @Value("${app.ai.openai.model:gpt-4o-mini}") String model,
             @Value("${app.ai.enabled:false}") boolean enabled
     ) {
-        this.objectMapper = objectMapper;
+        this.objectMapper = new ObjectMapper();
         this.apiKey = apiKey;
         this.model = model;
         this.enabled = enabled;
