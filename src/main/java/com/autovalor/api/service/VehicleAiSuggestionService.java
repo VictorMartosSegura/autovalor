@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 @Service
 public class VehicleAiSuggestionService {
@@ -103,13 +103,11 @@ public class VehicleAiSuggestionService {
         message.put("role", "user");
         message.put("content", content);
 
-        Map<String, Object> responseFormat = Map.of("type", "json_object");
-
         Map<String, Object> request = new LinkedHashMap<>();
         request.put("model", model);
         request.put("messages", List.of(message));
         request.put("temperature", 0.2);
-        request.put("response_format", responseFormat);
+        request.put("response_format", Map.of("type", "json_object"));
         return request;
     }
 
@@ -146,11 +144,31 @@ public class VehicleAiSuggestionService {
 
     private VehicleAiSuggestionResponse disabledResponse() {
         return new VehicleAiSuggestionResponse(
-                null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 0.0,
-                List.of("La IA no esta activada. Configura AI_ENABLED=true y OPENAI_API_KEY para obtener sugerencias reales.")
+                List.of("La IA no esta activada. Configura AI_ENABLED=true y la clave de OpenAI para obtener sugerencias reales.")
         );
     }
 
