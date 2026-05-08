@@ -9,6 +9,8 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,11 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class VehicleAiSuggestionService {
 
+    private static final Logger log = LoggerFactory.getLogger(VehicleAiSuggestionService.class);
     private static final List<String> ALLOWED_CONTENT_TYPES = List.of("image/jpeg", "image/png", "image/webp");
 
     private final WebClient webClient;
@@ -69,7 +73,12 @@ public class VehicleAiSuggestionService {
             return parseSuggestion(content);
         } catch (ResponseStatusException exception) {
             throw exception;
+        } catch (WebClientResponseException exception) {
+            log.error("OpenAI error while generating vehicle suggestion. Status: {}. Body: {}",
+                    exception.getStatusCode(), sanitizeOpenAiBody(exception.getResponseBodyAsString()));
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "OpenAI devolvio un error. Revisa la consola del backend.");
         } catch (Exception exception) {
+            log.error("Unexpected error while generating vehicle suggestion", exception);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "No se pudo obtener la sugerencia de IA");
         }
     }
@@ -186,6 +195,13 @@ public class VehicleAiSuggestionService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de imagen no permitido");
             }
         }
+    }
+
+    private String sanitizeOpenAiBody(String body) {
+        if (body == null || body.isBlank()) {
+            return "<empty>";
+        }
+        return body.length() > 1000 ? body.substring(0, 1000) + "..." : body;
     }
 
     private String text(JsonNode node, String field) {
