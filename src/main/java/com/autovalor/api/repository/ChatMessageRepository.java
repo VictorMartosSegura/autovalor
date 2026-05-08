@@ -17,14 +17,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
             """)
     List<ChatMessage> findAllByConversationId(@Param("conversationId") Long conversationId);
 
-    @Query("""
-            select m from ChatMessage m
-            join fetch m.sender
-            where m.conversation.id = :conversationId
-            order by m.createdAt desc
-            limit 1
-            """)
-    Optional<ChatMessage> findLastByConversationId(@Param("conversationId") Long conversationId);
+    Optional<ChatMessage> findTopByConversationIdOrderByCreatedAtDesc(Long conversationId);
 
     long countByConversationIdAndSenderIdNotAndReadAtIsNull(Long conversationId, Long senderId);
 }
