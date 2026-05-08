@@ -57,18 +57,19 @@ public class VehicleAiSuggestionService {
 
         try {
             Map<String, Object> request = buildRequest(prompt, images);
-            JsonNode response = webClient.post()
+            String responseBody = webClient.post()
                     .uri("/chat/completions")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
                     .bodyValue(request)
                     .retrieve()
-                    .bodyToMono(JsonNode.class)
+                    .bodyToMono(String.class)
                     .block();
 
-            if (response == null) {
+            if (responseBody == null || responseBody.isBlank()) {
                 throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "La IA no ha devuelto respuesta");
             }
 
+            JsonNode response = objectMapper.readTree(responseBody);
             String content = response.path("choices").path(0).path("message").path("content").asText();
             return parseSuggestion(content);
         } catch (ResponseStatusException exception) {
