@@ -9,6 +9,7 @@ import com.autovalor.api.model.Listing;
 import com.autovalor.api.repository.ChatMessageRepository;
 import com.autovalor.api.repository.ConversationRepository;
 import com.autovalor.api.repository.ListingRepository;
+import com.autovalor.api.websocket.ChatWebSocketHandler;
 import com.autovalor.user.User;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -23,15 +24,18 @@ public class ConversationService {
     private final ConversationRepository conversationRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final ListingRepository listingRepository;
+    private final ChatWebSocketHandler chatWebSocketHandler;
 
     public ConversationService(
             ConversationRepository conversationRepository,
             ChatMessageRepository chatMessageRepository,
-            ListingRepository listingRepository
+            ListingRepository listingRepository,
+            ChatWebSocketHandler chatWebSocketHandler
     ) {
         this.conversationRepository = conversationRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.listingRepository = listingRepository;
+        this.chatWebSocketHandler = chatWebSocketHandler;
     }
 
     @Transactional
@@ -90,7 +94,9 @@ public class ConversationService {
 
         ChatMessage message = chatMessageRepository.save(new ChatMessage(conversation, currentUser, content));
         conversation.markUpdated();
-        return toMessageResponse(message, currentUser);
+        MessageResponse response = toMessageResponse(message, currentUser);
+        chatWebSocketHandler.broadcastMessage(response);
+        return response;
     }
 
     private Conversation getConversationForUser(Long conversationId, User currentUser) {
