@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +30,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<Long, List<WebSocketSession>> sessionsByConversation = new ConcurrentHashMap<>();
 
     public ChatWebSocketHandler(
@@ -112,16 +113,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             Object currentUserIdValue = session.getAttributes().get("userId");
             Long currentUserId = currentUserIdValue instanceof Long value ? value : null;
 
-            MessageResponse payload = new MessageResponse(
-                    message.id(),
-                    message.conversationId(),
-                    message.senderId(),
-                    message.senderName(),
-                    message.content(),
-                    message.createdAt(),
-                    message.readAt(),
-                    currentUserId != null && currentUserId.equals(message.senderId())
-            );
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("id", message.id());
+            payload.put("conversationId", message.conversationId());
+            payload.put("senderId", message.senderId());
+            payload.put("senderName", message.senderName());
+            payload.put("content", message.content());
+            payload.put("createdAt", message.createdAt() == null ? null : message.createdAt().toString());
+            payload.put("readAt", message.readAt() == null ? null : message.readAt().toString());
+            payload.put("sentByCurrentUser", currentUserId != null && currentUserId.equals(message.senderId()));
 
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(payload)));
         } catch (Exception ignored) {
