@@ -91,41 +91,49 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
     public void broadcastMessage(MessageResponse message) {
-        List<WebSocketSession> sessions = sessionsByConversation.get(message.conversationId());
-        if (sessions == null || sessions.isEmpty()) {
-            return;
-        }
+        try {
+            List<WebSocketSession> sessions = sessionsByConversation.get(message.conversationId());
+            if (sessions == null || sessions.isEmpty()) {
+                return;
+            }
 
-        sessions.removeIf(session -> !session.isOpen());
+            sessions.removeIf(session -> !session.isOpen());
 
-        for (WebSocketSession session : sessions) {
-            sendMessage(session, message);
+            for (WebSocketSession session : List.copyOf(sessions)) {
+                sendMessage(session, message);
+            }
+        } catch (Exception ignored) {
+            // WebSocket must never break the REST chat flow.
         }
     }
 
     private void sendMessage(WebSocketSession session, MessageResponse message) {
-        Object currentUserIdValue = session.getAttributes().get("userId");
-        Long currentUserId = currentUserIdValue instanceof Long value ? value : null;
-
-        MessageResponse payload = new MessageResponse(
-                message.id(),
-                message.conversationId(),
-                message.senderId(),
-                message.senderName(),
-                message.content(),
-                message.createdAt(),
-                message.readAt(),
-                currentUserId != null && currentUserId.equals(message.senderId())
-        );
-
         try {
+            Object currentUserIdValue = session.getAttributes().get("userId");
+            Long currentUserId = currentUserIdValue instanceof Long value ? value : null;
+
+            MessageResponse payload = new MessageResponse(
+                    message.id(),
+                    message.conversationId(),
+                    message.senderId(),
+                    message.senderName(),
+                    message.content(),
+                    message.createdAt(),
+                    message.readAt(),
+                    currentUserId != null && currentUserId.equals(message.senderId())
+            );
+
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(payload)));
+        } catch (Exception ignored) {
+            tryClose(session);
+        }
+    }
+
+    private void tryClose(WebSocketSession session) {
+        try {
+            session.close(CloseStatus.SERVER_ERROR);
         } catch (IOException ignored) {
-            try {
-                session.close(CloseStatus.SERVER_ERROR);
-            } catch (IOException ignoredAgain) {
-                // Ignore close failure.
-            }
+            // Ignore close failure.
         }
     }
 
