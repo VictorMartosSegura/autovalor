@@ -29,19 +29,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
     private final Map<Long, List<WebSocketSession>> sessionsByConversation = new ConcurrentHashMap<>();
 
     public ChatWebSocketHandler(
             JwtService jwtService,
             UserRepository userRepository,
-            ConversationRepository conversationRepository,
-            ObjectMapper objectMapper
+            ConversationRepository conversationRepository
     ) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.conversationRepository = conversationRepository;
-        this.objectMapper = objectMapper;
     }
 
     @Override
