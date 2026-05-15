@@ -97,8 +97,8 @@ public class ListingController {
     }
 
     @GetMapping("/{id}")
-    public ListingResponse getById(@PathVariable Long id) {
-        return listingService.findById(id);
+    public ListingResponse getById(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        return listingService.findById(id, user);
     }
 
     @GetMapping("/me")
