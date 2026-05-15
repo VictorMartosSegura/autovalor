@@ -41,6 +41,24 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Size(max = 80)
+    @Column(name = "address_country", length = 80)
+    private String addressCountry;
+
+    @Size(max = 120)
+    @Column(name = "address_city", length = 120)
+    private String addressCity;
+
+    @Size(max = 255)
+    @Column(name = "address_line", length = 255)
+    private String addressLine;
+
+    @Column(name = "address_latitude")
+    private Double addressLatitude;
+
+    @Column(name = "address_longitude")
+    private Double addressLongitude;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
@@ -58,46 +76,37 @@ public class User implements UserDetails {
         this.role = role == null ? Role.USER : role;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getAddressCountry() { return addressCountry; }
+    public void setAddressCountry(String addressCountry) { this.addressCountry = addressCountry; }
 
-    public Role getRole() {
-        return role;
-    }
+    public String getAddressCity() { return addressCity; }
+    public void setAddressCity(String addressCity) { this.addressCity = addressCity; }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    public String getAddressLine() { return addressLine; }
+    public void setAddressLine(String addressLine) { this.addressLine = addressLine; }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
+    public Double getAddressLatitude() { return addressLatitude; }
+    public void setAddressLatitude(Double addressLatitude) { this.addressLatitude = addressLatitude; }
+
+    public Double getAddressLongitude() { return addressLongitude; }
+    public void setAddressLongitude(Double addressLongitude) { this.addressLongitude = addressLongitude; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public Instant getCreatedAt() { return createdAt; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -105,27 +114,17 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return email;
-    }
+    public String getUsername() { return email; }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() { return true; }
 }
