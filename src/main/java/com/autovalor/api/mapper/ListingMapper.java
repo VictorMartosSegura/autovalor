@@ -57,6 +57,11 @@ public final class ListingMapper {
         if (owner != null) {
             dto.setUserId(owner.getId());
             dto.setUserName(owner.getName());
+            dto.setSellerAddressCountry(owner.getAddressCountry());
+            dto.setSellerAddressCity(owner.getAddressCity());
+            dto.setSellerAddressLine(owner.getAddressLine());
+            dto.setSellerAddressLatitude(owner.getAddressLatitude());
+            dto.setSellerAddressLongitude(owner.getAddressLongitude());
         }
 
         return dto;
