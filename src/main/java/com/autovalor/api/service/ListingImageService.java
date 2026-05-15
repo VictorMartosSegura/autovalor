@@ -67,13 +67,14 @@ public class ListingImageService {
 
         String extension = getExtension(file.getOriginalFilename(), file.getContentType());
         String fileName = UUID.randomUUID() + extension;
-        String publicId = cloudinaryFolder + "/" + listingId + "/" + removeExtension(fileName);
+        String publicIdWithoutFolder = removeExtension(fileName);
+        String fallbackPublicId = cloudinaryFolder + "/" + listingId + "/" + publicIdWithoutFolder;
 
         Map<?, ?> uploadResult;
         try {
             uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                     "folder", cloudinaryFolder + "/" + listingId,
-                    "public_id", removeExtension(fileName),
+                    "public_id", publicIdWithoutFolder,
                     "resource_type", "image",
                     "overwrite", true
             ));
@@ -82,7 +83,8 @@ public class ListingImageService {
         }
 
         String url = String.valueOf(uploadResult.get("secure_url"));
-        String savedPublicId = String.valueOf(uploadResult.getOrDefault("public_id", publicId));
+        Object publicIdValue = uploadResult.get("public_id");
+        String savedPublicId = publicIdValue == null ? fallbackPublicId : String.valueOf(publicIdValue);
 
         ListingImage image = new ListingImage(
                 listing,
