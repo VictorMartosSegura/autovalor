@@ -6,6 +6,8 @@ import com.autovalor.api.repository.ListingImageRepository;
 import com.autovalor.api.repository.ListingRepository;
 import com.autovalor.user.dto.ChangeSecretRequest;
 import com.autovalor.user.dto.UpdateProfileRequest;
+import com.autovalor.user.dto.UserAddressRequest;
+import com.autovalor.user.dto.UserAddressResponse;
 import com.autovalor.user.dto.UserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,6 +57,16 @@ public class UserProfileService {
     }
 
     @Transactional
+    public UserAddressResponse updateAddress(User user, UserAddressRequest request) {
+        user.setAddressCountry(clean(request.getCountry()));
+        user.setAddressCity(clean(request.getCity()));
+        user.setAddressLine(clean(request.getAddress()));
+        user.setAddressLatitude(request.getLatitude());
+        user.setAddressLongitude(request.getLongitude());
+        return UserAddressResponse.from(userRepository.save(user));
+    }
+
+    @Transactional
     public void changeSecret(User user, ChangeSecretRequest request) {
         if (!passwordEncoder.matches(request.getCurrentSecret(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña actual no es correcta");
@@ -83,5 +95,12 @@ public class UserProfileService {
         );
 
         userRepository.delete(user);
+    }
+
+    private String clean(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
     }
 }
