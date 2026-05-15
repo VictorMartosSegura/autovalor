@@ -7,13 +7,11 @@ import com.autovalor.api.repository.ListingImageRepository;
 import com.autovalor.api.repository.ListingRepository;
 import com.autovalor.user.Role;
 import com.autovalor.user.User;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,19 +32,22 @@ public class ListingImageService {
 
     private final ListingRepository listingRepository;
     private final ListingImageRepository listingImageRepository;
-    private final Path uploadRoot;
+    private final Cloudinary cloudinary;
     private final int maxImagesPerListing;
+    private final String cloudinaryFolder;
 
     public ListingImageService(
             ListingRepository listingRepository,
             ListingImageRepository listingImageRepository,
-            @Value("${app.upload.dir:uploads}") String uploadDir,
-            @Value("${app.upload.max-images-per-listing:6}") int maxImagesPerListing
+            Cloudinary cloudinary,
+            @Value("${app.upload.max-images-per-listing:6}") int maxImagesPerListing,
+            @Value("${app.cloudinary.folder:autovalor/listings}") String cloudinaryFolder
     ) {
         this.listingRepository = listingRepository;
         this.listingImageRepository = listingImageRepository;
-        this.uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
+        this.cloudinary = cloudinary;
         this.maxImagesPerListing = maxImagesPerListing;
+        this.cloudinaryFolder = cloudinaryFolder;
     }
 
     @Transactional(readOnly = true)
@@ -66,22 +67,26 @@ public class ListingImageService {
 
         String extension = getExtension(file.getOriginalFilename(), file.getContentType());
         String fileName = UUID.randomUUID() + extension;
-        Path listingDirectory = uploadRoot.resolve("listings").resolve(String.valueOf(listingId));
-        Path destination = listingDirectory.resolve(fileName).normalize();
+        String publicId = cloudinaryFolder + "/" + listingId + "/" + removeExtension(fileName);
 
+        Map<?, ?> uploadResult;
         try {
-            Files.createDirectories(listingDirectory);
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destination, StandardCopyOption.REPLACE_EXISTING);
-            }
+            uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "folder", cloudinaryFolder + "/" + listingId,
+                    "public_id", removeExtension(fileName),
+                    "resource_type", "image",
+                    "overwrite", true
+            ));
         } catch (IOException exception) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo guardar la imagen");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo subir la imagen a Cloudinary");
         }
 
-        String url = "/uploads/listings/" + listingId + "/" + fileName;
+        String url = String.valueOf(uploadResult.get("secure_url"));
+        String savedPublicId = String.valueOf(uploadResult.getOrDefault("public_id", publicId));
+
         ListingImage image = new ListingImage(
                 listing,
-                fileName,
+                savedPublicId,
                 url,
                 file.getContentType(),
                 file.getSize()
@@ -100,19 +105,14 @@ public class ListingImageService {
         ListingImage image = listingImageRepository.findByIdAndListingId(imageId, listingId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imagen no encontrada"));
 
+        try {
+            cloudinary.uploader().destroy(image.getFileName(), ObjectUtils.asMap("resource_type", "image"));
+        } catch (IOException exception) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo borrar la imagen de Cloudinary");
+        }
+
         listingImageRepository.delete(image);
         listing.markUpdated();
-
-        Path imagePath = uploadRoot.resolve("listings")
-                .resolve(String.valueOf(listingId))
-                .resolve(image.getFileName())
-                .normalize();
-
-        try {
-            Files.deleteIfExists(imagePath);
-        } catch (IOException exception) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo borrar el archivo de imagen");
-        }
     }
 
     private void ensureListingExists(Long listingId) {
@@ -162,5 +162,10 @@ public class ListingImageService {
             case "image/webp" -> ".webp";
             default -> ".jpg";
         };
+    }
+
+    private String removeExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        return dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
     }
 }
