@@ -6,6 +6,8 @@ import com.autovalor.api.service.FavoriteService;
 import com.autovalor.api.service.ListingService;
 import com.autovalor.user.dto.ChangeSecretRequest;
 import com.autovalor.user.dto.UpdateProfileRequest;
+import com.autovalor.user.dto.UserAddressRequest;
+import com.autovalor.user.dto.UserAddressResponse;
 import com.autovalor.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -27,11 +29,7 @@ public class UserController {
     private final ListingService listingService;
     private final FavoriteService favoriteService;
 
-    public UserController(
-            UserProfileService userProfileService,
-            ListingService listingService,
-            FavoriteService favoriteService
-    ) {
+    public UserController(UserProfileService userProfileService, ListingService listingService, FavoriteService favoriteService) {
         this.userProfileService = userProfileService;
         this.listingService = listingService;
         this.favoriteService = favoriteService;
@@ -43,18 +41,22 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public UserResponse updateCurrentUser(
-            @AuthenticationPrincipal User user,
-            @Valid @RequestBody UpdateProfileRequest request
-    ) {
+    public UserResponse updateCurrentUser(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateProfileRequest request) {
         return userProfileService.updateProfile(user, request);
     }
 
+    @GetMapping("/me/address")
+    public UserAddressResponse getCurrentUserAddress(@AuthenticationPrincipal User user) {
+        return UserAddressResponse.from(user);
+    }
+
+    @PutMapping("/me/address")
+    public UserAddressResponse updateCurrentUserAddress(@AuthenticationPrincipal User user, @Valid @RequestBody UserAddressRequest request) {
+        return userProfileService.updateAddress(user, request);
+    }
+
     @PatchMapping("/me/password")
-    public ResponseEntity<Void> changeCurrentUserPassword(
-            @AuthenticationPrincipal User user,
-            @Valid @RequestBody ChangeSecretRequest request
-    ) {
+    public ResponseEntity<Void> changeCurrentUserPassword(@AuthenticationPrincipal User user, @Valid @RequestBody ChangeSecretRequest request) {
         userProfileService.changeSecret(user, request);
         return ResponseEntity.noContent().build();
     }
