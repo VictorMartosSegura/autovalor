@@ -9,7 +9,12 @@ public record UserResponse(
         String name,
         String email,
         Role role,
-        Instant createdAt
+        Instant createdAt,
+        String addressCountry,
+        String addressCity,
+        String addressLine,
+        Double addressLatitude,
+        Double addressLongitude
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -17,7 +22,12 @@ public record UserResponse(
                 user.getName(),
                 user.getEmail(),
                 user.getRole(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.getAddressCountry(),
+                user.getAddressCity(),
+                user.getAddressLine(),
+                user.getAddressLatitude(),
+                user.getAddressLongitude()
         );
     }
 }
