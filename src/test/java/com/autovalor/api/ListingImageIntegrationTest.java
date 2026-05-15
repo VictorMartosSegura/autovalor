@@ -2,6 +2,9 @@ package com.autovalor.api;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -12,18 +15,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.autovalor.api.repository.ListingImageRepository;
 import com.autovalor.api.repository.ListingRepository;
 import com.autovalor.user.UserRepository;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Uploader;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockitoBean;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -40,18 +42,14 @@ import org.springframework.test.web.servlet.MvcResult;
         "app.admin.name=AutoValor Admin",
         "app.admin.email=admin-image@autovalor.test",
         "app.admin.password=AdminImage123",
-        "app.upload.max-images-per-listing=6"
+        "app.upload.max-images-per-listing=6",
+        "app.cloudinary.cloud-name=test-cloud",
+        "app.cloudinary.api-key=test-key",
+        "app.cloudinary.api-secret=test-secret",
+        "app.cloudinary.folder=autovalor/test-listings"
 })
 @AutoConfigureMockMvc
 class ListingImageIntegrationTest {
-
-    @TempDir
-    static Path uploadDir;
-
-    @DynamicPropertySource
-    static void uploadProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.upload.dir", () -> uploadDir.toString());
-    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -65,11 +63,24 @@ class ListingImageIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @MockitoBean
+    private Cloudinary cloudinary;
+
+    @MockitoBean
+    private Uploader uploader;
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         listingImageRepository.deleteAll();
         listingRepository.deleteAll();
         userRepository.deleteAll();
+
+        when(cloudinary.uploader()).thenReturn(uploader);
+        when(uploader.upload(any(byte[].class), anyMap())).thenReturn(Map.of(
+                "secure_url", "https://res.cloudinary.com/test-cloud/image/upload/autovalor/test-listings/car.png",
+                "public_id", "autovalor/test-listings/car"
+        ));
+        when(uploader.destroy(any(String.class), anyMap())).thenReturn(Map.of("result", "ok"));
     }
 
     @Test
