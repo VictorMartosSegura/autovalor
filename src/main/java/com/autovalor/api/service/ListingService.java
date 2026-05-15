@@ -127,9 +127,9 @@ public class ListingService {
     }
 
     @Transactional(readOnly = true)
-    public ListingResponse findById(Long id) {
+    public ListingResponse findById(Long id, User user) {
         Listing listing = getExistingListing(id);
-        if (listing.getStatus() == ListingStatus.HIDDEN) {
+        if (listing.getStatus() == ListingStatus.HIDDEN && !canViewHiddenListing(listing, user)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Anuncio no encontrado");
         }
         return ListingMapper.toResponse(listing);
@@ -174,6 +174,15 @@ public class ListingService {
         favoriteRepository.deleteAllByListingId(id);
         listingImageRepository.deleteAll(listingImageRepository.findAllByListingIdOrderByCreatedAtAsc(id));
         listingRepository.delete(listing);
+    }
+
+    private boolean canViewHiddenListing(Listing listing, User user) {
+        if (user == null) {
+            return false;
+        }
+        boolean isOwner = listing.getUser().getId().equals(user.getId());
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+        return isOwner || isAdmin;
     }
 
     private Specification<Listing> buildSearchSpec(
