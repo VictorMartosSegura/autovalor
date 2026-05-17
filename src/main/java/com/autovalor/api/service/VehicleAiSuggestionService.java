@@ -89,13 +89,32 @@ public class VehicleAiSuggestionService {
         content.add(Map.of(
                 "type", "text",
                 "text", """
-                        Analiza las fotos del vehiculo y el texto del usuario. Devuelve solo JSON valido, sin markdown.
-                        No inventes datos que no puedan deducirse. Si no sabes un campo, usa null.
-                        El usuario revisara los datos antes de publicar el anuncio.
-                        Campos esperados: title, description, brand, model, year, km, fuelType, transmission,
-                        location, province, sellerType, bodyType, doors, powerCv, engineSize, environmentalLabel,
+                        Eres un experto en vehiculos de segunda mano y en redaccion de anuncios profesionales.
+                        Analiza las imagenes del vehiculo y el texto del usuario.
+                        Devuelve unicamente JSON valido, sin markdown ni texto adicional.
+                        Responde siempre en castellano.
+
+                        Si no puedes determinar un dato con seguridad, devuelve null y anade un aviso en warnings.
+                        No inventes kilometraje, ano, potencia, combustible, propietarios ni equipamiento.
+
+                        Usa estos valores cerrados cuando correspondan:
+                        fuelType: GASOLINE, DIESEL, ELECTRIC, HYBRID o null.
+                        transmission: MANUAL, AUTOMATIC o null.
+                        bodyType: SEDAN, SUV, HATCHBACK, COUPE, WAGON, VAN, CONVERTIBLE o null.
+                        sellerType: PRIVATE, PROFESSIONAL o null.
+                        environmentalLabel: ECO, ZERO, C, B o null.
+
+                        Devuelve exactamente estos campos:
+                        title, description, brand, model, year, km, fuelType, transmission, location,
+                        province, sellerType, bodyType, doors, powerCv, engineSize, environmentalLabel,
                         warranty, color, registrationMonth, registrationYear, previousOwners, financeable,
                         maintenanceBook, confidence, warnings.
+
+                        confidence debe ser un numero entre 0 y 1.
+                        warnings debe ser un array de avisos para que el usuario revise datos dudosos.
+                        El usuario revisara y editara la propuesta antes de publicar.
+
+                        Orden recomendado de imagenes: frontal, trasera, lateral, interior, cuadro de mandos y extra.
                         Prompt del usuario: %s
                         """.formatted(prompt == null ? "" : prompt)
         ));
@@ -115,7 +134,7 @@ public class VehicleAiSuggestionService {
         Map<String, Object> request = new LinkedHashMap<>();
         request.put("model", model);
         request.put("messages", List.of(message));
-        request.put("temperature", 0.2);
+        request.put("temperature", 0.1);
         request.put("response_format", Map.of("type", "json_object"));
         return request;
     }
